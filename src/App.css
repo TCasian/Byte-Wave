@@ -1,0 +1,46 @@
+#root {
+  margin: 0 auto;
+  padding: 0rem;
+  text-align: center;
+  overflow-x: hidden
+  
+}
+
+.top-headlines {
+  margin-top: 0px; 
+  flex-grow: 1;
+  height: calc(100vh - 8px);
+  width: calc(100% - 8px);
+  background-color: #1a1919;
+  border: 4px solid #2c8570;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  
+  /* padding incluso nella larghezza */
+}
+
+.titles{
+  border: 1px solid red;
+  height: 85%;
+  width: 30%;
+  margin-top: 80px;
+}
+
+.articles {
+  border: 1px solid red;
+  height: 85%;
+  width: 60%;
+  margin-top: 80px
+}
+
+.ad-space{
+  border: 1px solid blue;
+  height: 100vh;
+  width: 100%;
+  background-color: white;
+}
+
+
+
