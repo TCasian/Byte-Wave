@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://techripples.vercel.app/sitemap.xml

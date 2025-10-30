@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch, FaBars, FaTimes, FaUser } from "react-icons/fa";
 import './Header.css';
 
 import { useSelector, useDispatch } from "react-redux";
 import { toggleMenu } from "../features/menu/menuSlice";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 function Header() {
   const menuOpen = useSelector((state) => state.menu.open);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const links = [
     { name: "Latest", path: "/" },
@@ -47,7 +48,11 @@ function Header() {
              <div className="burger" onClick={() => dispatch(toggleMenu())} >
           {menuOpen ? <FaTimes /> : <FaBars />}
         </div>
+        
         </div>
+        <div className="icon"> 
+            <FaUser onClick={() => navigate('/login')} />
+         </div>
       </div>
       
     </header>

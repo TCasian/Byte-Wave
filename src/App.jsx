@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './supabaseClient.js'
 import Security from './pages/security/security'
 import AddArticles from './pages/add-articles/add-articles';
-
+import Login from './pages/auth/login'
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
 
         <Route path="/security" element={<Security />} />
         <Route path="/add-articles" element={<AddArticles />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   )
