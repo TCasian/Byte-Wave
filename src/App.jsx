@@ -5,6 +5,8 @@ import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './supabaseClient.js'
 import Security from './pages/security/security'
+import AddArticles from './pages/add-articles/add-articles';
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         } />
 
         <Route path="/security" element={<Security />} />
+        <Route path="/add-articles" element={<AddArticles />} />
       </Routes>
     </Router>
   )

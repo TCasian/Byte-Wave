@@ -35,16 +35,16 @@ export class SupabaseService {
     return data
   }
 
-  static async insertArticle({ title, content, preview, image_url, category, author_id }) {
+  static async insertArticle({ titolo, contenuto, preview, immagine, categoria, author_id }) {
     const { data, error } = await supabase
       .from('articles')
       .insert([
         {
-          title,
-          content,
+          titolo,
+          contenuto,
           preview,
-          image_url,
-          category,
+          immagine,
+          categoria,
           author_id,
         },
       ])

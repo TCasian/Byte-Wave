@@ -26,7 +26,7 @@ function Header() {
       {/* Logo */}
       <div className="logo-section">
         <img src="logo.png" alt="Logo" className="logo-img" />
-        <span className="logo-title">ByteWave</span>
+        <span className="logo-title">TechRipples</span>
       </div>
 
       {/* Navbar */}
