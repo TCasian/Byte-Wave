@@ -4,6 +4,7 @@ import './Header.css';
 
 import { useSelector, useDispatch } from "react-redux";
 import { toggleMenu } from "../features/menu/menuSlice";
+import { Link } from 'react-router-dom'
 
 
 function Header() {
@@ -32,7 +33,7 @@ function Header() {
       <nav className={`nav active`}>
         {links.map(link => (
           <div key={link.name} className="nav-item">
-              <a href={link.path}>{link.name}</a>
+            <Link to={link.path}>{link.name}</Link>
           </div>
         ))}
       </nav>
