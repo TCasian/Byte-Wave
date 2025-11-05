@@ -361,7 +361,7 @@ const PixelBlast = ({
       });
       renderer.domElement.style.width = '100%';
       renderer.domElement.style.height = '100%';
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1));
       container.appendChild(renderer.domElement);
       const uniforms = {
         uResolution: { value: new THREE.Vector2(0, 0) },
@@ -398,8 +398,8 @@ const PixelBlast = ({
       scene.add(quad);
       const clock = new THREE.Clock();
       const setSize = () => {
-        const w = container.clientWidth || 1;
-        const h = container.clientHeight || 1;
+          const w = Math.max(container.clientWidth, 200);
+        const h = Math.max(container.clientHeight, 200);
         renderer.setSize(w, h, false);
         uniforms.uResolution.value.set(renderer.domElement.width, renderer.domElement.height);
         if (threeRef.current?.composer)

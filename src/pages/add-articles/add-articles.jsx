@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { SupabaseService } from "../../supabaseClient";
 import { TbBackground } from "react-icons/tb";
 
 function AddArticles() {
@@ -10,29 +9,7 @@ function AddArticles() {
   const [category, setCategory] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const data = await SupabaseService.insertArticle({
-      titolo: title,         // mappa lo state title → titolo
-      contenuto: content,    // content → contenuto
-      preview: preview,      // stesso nome
-      immagine: imageUrl,   // imageUrl → immmagine
-      categoria: category,   // category → categoria
-      author_id: "912365fc-1154-42c4-90d1-83efc7c896b2",       // autore fisso
-    });
-    setMessage(`Articolo "${title}" inserito con successo!`);
 
-    // pulisce i campi
-    setTitle("");
-    setPreview("");
-    setContent("");
-    setImageUrl("");
-    setCategory("");
-  } catch (error) {
-    setMessage(`Errore: ${error.message}`);
-  }
-};
 
   return (
     <div style={{ padding: "2rem", backgroundColor: "#2e2b2bff" }}>

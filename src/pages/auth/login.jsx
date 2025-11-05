@@ -3,6 +3,7 @@ import './auth.css';
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import PixelBlast from './PixelBlast';
+import { Link, useNavigate,  } from 'react-router-dom'
 
 
 function Login() {
@@ -10,6 +11,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -61,6 +63,7 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             required
         />
+        
 
         <input
             className='input-auth'
@@ -77,12 +80,16 @@ function Login() {
             checked={rememberMe}
             onChange={() => setRememberMe(!rememberMe)}
           />
-          Ricordami
+          Remember Me
         </label>
 
         <button type="submit" className='submit-button'>
           Accedi
         </button>
+        <div className='signup-div'>
+          <h4>You don't have an account?</h4> <h4 className='link-signup' onClick={() => navigate('/signup')}>Sign Up</h4>
+        </div>
+      
 
         {message && <p style={{ color: "#fff", textAlign: "center" }}>{message}</p>}
       </form>

@@ -50,8 +50,8 @@ function Header() {
         </div>
         
         </div>
-        <div className="icon"> 
-            <FaUser onClick={() => navigate('/login')} />
+        <div className="icon" onClick={() => navigate('/login')}> 
+            <FaUser />
          </div>
       </div>
       
