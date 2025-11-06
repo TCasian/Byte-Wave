@@ -6,12 +6,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Recupera l'utente loggato
   useEffect(() => {
     async function fetchUser() {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data.user) {
-        navigate("/login");
       } else {
         setUser(data.user);
       }
