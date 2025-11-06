@@ -6,107 +6,91 @@ import {CheckboxItem} from "../../componenti/checkbox";
 import { useNavigate } from "react-router-dom";
 
 function Signup() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ username: "", email: "", password: "" });
-  const [invalidInputs, setInvalidInputs] = useState({ username: false, email: false, password: false });
-  const [validInputs, setValidInputs] = useState({ username: false, email: false, password: false });
-  const [showPasswordChecklist, setShowPasswordChecklist] = useState(false);
-
   const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  const navigate  = useNavigate()
-  const flashRed = (field) => {
-    setInvalidInputs((prev) => ({ ...prev, [field]: true }));
-    setTimeout(() => {
-      setInvalidInputs((prev) => ({ ...prev, [field]: false }));
-    }, 1500);
+  
+  const navigate  = useNavigate();
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const [status, setStatus] = useState({
+    errors: {},
+    valid: {},
+  });
+
+  const [showPasswordChecklist, setShowPasswordChecklist] = useState(false);
+  const passwordChecks = {
+    length: form.password.length >= 8,
+    lowercase: /[a-z]/.test(form.password),
+    uppercase: /[A-Z]/.test(form.password),
+    number: /\d/.test(form.password),
+    symbol: /[@$!%*?&]/.test(form.password),
   };
 
-  const handleUsernameChange = (e) => {
-    const value = e.target.value;
-    setUsername(value);
-    if (!usernameRegex.test(value)) {
-      setErrors((prev) => ({
-        ...prev,
-        username:
-          "Username not valid (3-20 characters, letters, numbers, dots, and underscores only)",
-      }));
-      setValidInputs((prev) => ({ ...prev, username: false }));
-      flashRed("username");
-    } else {
-      setErrors((prev) => ({ ...prev, username: "" }));
-      setValidInputs((prev) => ({ ...prev, username: true }));
-    }
-  };
-
-  const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-
-    if (!emailRegex.test(value)) {
-      setErrors((prev) => ({ ...prev, email: "Email non valida" }));
-      flashRed("email");
-      setValidInputs((prev) => ({ ...prev, email: false }));
-
-    } else {
-      setErrors((prev) => ({ ...prev, email: "" }));
-      setValidInputs((prev) => ({ ...prev, email: true }));
-
-    }
-  };
-
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-
-    if (!passwordRegex.test(value)) {
-      setErrors((prev) => ({
-        ...prev,
-        password: "Weak password",
-      }));
-      setValidInputs((prev) => ({ ...prev, password: false }));
-      flashRed("password");
-    } else {
-      setErrors((prev) => ({ ...prev, password: "" }));
-      setValidInputs((prev) => ({ ...prev, password: true }));
-
-    }
-  };
-
-  const showChecklist = (state) => {
-    setShowPasswordChecklist(state);
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    let error = "";
+    let isValid = false;
+    switch (field) {
+      case "username":
+        if (!usernameRegex.test(value)) error = "Invalid username (3-20 chars, letters/numbers only)";
+        else isValid = true;
+        break;
+      case "email":
+        if (!emailRegex.test(value)) error = "Invalid email format";
+        else isValid = true;
+        break;
+      case "password":
+        if (!passwordRegex.test(value)) error = "Weak password";
+        else isValid = true;
+        break;
+      default:
+        break;
   }
+  setStatus((prev) => ({
+    errors: { ...prev.errors, [field]: error },
+    valid: { ...prev.valid, [field]: isValid },
+    }));
+  };
 
   async function handleRegister(username, email, password) {
-    const body = { username, email, password };
+    const body = {username, email, password };
     console.log("➡️ Inviando:", body);
 
   const res = await fetch(
-    "https://pwddgvpjpqpvludspjwr.supabase.co/functions/v1/validate-subscribe",
+    "https://pwddgvpjpqpvludspjwr.supabase.co/functions/v1/create-user",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       body: JSON.stringify(body),
     }
   );
 
   const data = await res.json();
-  console.log("⬅️ Risposta:", data);
+  const error = data?.error;
+    console.log("➡️ ricevuto", data);
+
+  switch(error || data?.message) {
+    case "USERNAME_TAKEN":
+      alert("Username already taken. Please choose another one.");
+      break;
+    case "EMAIL_TAKEN":
+      alert("Email already registered. Please use another email.");
+      break;
+    case "OK_SUCCESS":
+      alert("Registration successful! You can now log in.");
+      break;
+    default:
+      alert("An unexpected error occurred. Please try again later.");
+      break;
+  }
 }
 
 
-  // Stato dei requisiti password
-  const passwordChecks = {
-    length: password.length >= 8,
-    lowercase: /[a-z]/.test(password),
-    uppercase: /[A-Z]/.test(password),
-    number: /\d/.test(password),
-    symbol: /[@$!%*?&]/.test(password),
-  };
 
   return (
     <div className="container-auth">
@@ -129,55 +113,48 @@ function Signup() {
 
       <form className="form-auth"onSubmit={(e) => {
           e.preventDefault();
-          handleRegister(username, email, password);
+          handleRegister(form.username, form.email, form.password);
         }}>
         <h1 style={{ color: "#fff", textAlign: "center" , marginTop: "0px"}}>Signup</h1>
 
-        {/* USERNAME */}
         <input
-          className={`input-auth-signup ${validInputs.username ? "valid-input" : "input-auth-signup"} ${invalidInputs.username ? "invalid-div" : ""}`}
+          className={`input-auth ${status.valid.username ? "valid" : ""} ${status.errors.username ? "invalid" : ""}`}
           type="text"
           placeholder="Username"
-          value={username}
-          onChange={handleUsernameChange}
+          value={form.username}
+          onChange={(e) => handleChange("username", e.target.value)}
           required
         />
-        {errors.username && (
-          <p style={{ color: "red", fontSize: "0.9rem" }}>{errors.username}</p>
-        )}
+        {status.errors.username && <p className="error-text">{status.errors.username}</p>}
 
-        {/* EMAIL */}
         <input
-          className={`input-auth-signup ${validInputs.email ? "valid-input" : "input-auth-signup"} ${invalidInputs.email ? "invalid-div" : ""}`}
+          className={`input-auth ${status.valid.email ? "valid" : ""} ${status.errors.email ? "invalid" : ""}`}
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={handleEmailChange}
+          value={form.email}
+          onChange={(e) => handleChange("email", e.target.value)}
           required
         />
-        {errors.email && (
-          <p style={{ color: "red", fontSize: "0.9rem" }}>{errors.email}</p>
-        )}
+        {status.errors.email && <p className="error-text">{status.errors.email}</p>}
 
-        {/* PASSWORD */}
+
         <input
-          className={`input-auth-signup ${validInputs.password ? "valid-input" : "input-auth-signup"} ${invalidInputs.password ? "invalid-div" : ""}`}
+          className={`input-auth ${status.valid.password ? "valid" : ""} ${status.errors.password ? "invalid" : ""}`}
           type="password"
           placeholder="Password"
-          value={password}
-          onFocus={() => showChecklist(true)}
-          onBlur={() => showChecklist(false)}
-          onChange={handlePasswordChange}
+          value={form.password}
+          onFocus={() =>  setShowPasswordChecklist(true)}
+          onBlur={() => setShowPasswordChecklist(false)}
+          onChange={(e) => handleChange("password", e.target.value)}
           required
         />
 
-        {/* Lista requisiti password */}
-        <div className="password-checklist" style={{ display: showPasswordChecklist ? "block" : "none" }}>
+        <div className="password-checklist" style={{ display: showPasswordChecklist ? "flex" : "none" }}>
               <CheckboxItem isMet={passwordChecks.length} label="Atlest 8 characters" />
               <CheckboxItem isMet={passwordChecks.lowercase} label="At least one lowercase letter" />
               <CheckboxItem isMet={passwordChecks.uppercase} label="At least one uppercase letter" />
               <CheckboxItem isMet={passwordChecks.number} label="At least one number" />
-              <CheckboxItem isMet={passwordChecks.symbol} label="At least one special character (@$!%*?&)" />
+              <CheckboxItem isMet={passwordChecks.symbol} label="At least one special character " />
         </div>
 
         <button type="submit" className="submit-button">

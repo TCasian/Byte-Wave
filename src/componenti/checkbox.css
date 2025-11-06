@@ -32,6 +32,13 @@
     height: 10%;
 }
 
+.text{
+    color: white;
+    font-size: 1em;
+    font-weight: bold;
+    align-self: centers;
+}
+
 @media (max-width: 1025px) {
     
 }

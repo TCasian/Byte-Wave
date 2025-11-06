@@ -23,11 +23,13 @@ function Login() {
         password,
       });
 
+       console.log("✅ Utente loggato:", data.user);
+       console.log("🪪 Token:", data.session.access_token);
+
       if (error) {
         setMessage(`Errore: ${error.message}`);
       } else {
         setMessage("Login avvenuto con successo!");
-        // puoi fare redirect o aggiornare lo stato globale
       }
     } catch (err) {
       setMessage(`Errore: ${err.message}`);
