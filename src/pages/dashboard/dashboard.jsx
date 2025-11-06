@@ -67,7 +67,10 @@ function Dashboard() {
           </button>
         </>
       ) : (
-        <p>Caricamento utente...</p>
+        <div>
+          <p>Caricamento utente...</p>
+          <button onClick={signOut}> esci </button>
+        </div>
       )}
     </div>
   );
