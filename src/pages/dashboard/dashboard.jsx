@@ -26,6 +26,12 @@ function Dashboard() {
       console.log("✅ Logout avvenuto con successo");
       localStorage.clear(); // se salvi cose extra
       sessionStorage.clear();
+      if (window.google && window.google.accounts?.id) {
+        window.google.accounts.id.disableAutoSelect();
+        window.google.accounts.id.revoke(email, () => {
+          console.log("🔒 Sessione Google revocata");
+        });
+      }
       navigate("/login");
     }
   };

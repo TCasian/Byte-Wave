@@ -20,6 +20,9 @@ function App() {
       } else {
         console.log("🚪 Logout o sessione scaduta");
       }
+      if (window.google && window.google.accounts?.id) {
+        window.google.accounts.id.disableAutoSelect();
+      }
     });
 
     return () => subscription.unsubscribe();
