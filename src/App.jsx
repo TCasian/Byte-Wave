@@ -7,7 +7,7 @@ import Security from "./pages/security/security";
 import AddArticles from "./pages/add-articles/add-articles";
 import Login from "./pages/auth/login";
 import Signup from "./pages/auth/signup";
-
+import Dashboard from "./pages/dashboard/dashboard";
 function App() {
   useEffect(() => {
     const {
