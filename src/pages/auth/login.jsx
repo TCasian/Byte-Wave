@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import PixelBlast from "./PixelBlast";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Login() {
   const [email, setEmail] = useState("");
