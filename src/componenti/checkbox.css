@@ -1,44 +1,42 @@
 .checkbox-box {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 15px; 
-    height: 15px; 
-    border-radius: 3px;
-    margin: 0;
-    transition: all 0.2s ease-in-out; 
-    
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  margin: 0;
+  transition: all 0.2s ease-in-out;
 }
 
 .checkbox-failed {
-    border: 1px solid #d1d6d5;
-    background-color: #f50000; 
-    font-weight: bold;
+  border: 1px solid #d1d6d5;
+  background-color: #f50000;
+  font-weight: bold;
 }
 
 .checkbox-ticked {
-    border: 1px solid rgb(44, 133, 112);
-    background-color: rgb(44, 133, 112); 
-    color: white; 
-    font-size: 14px; 
+  border: 1px solid rgb(44, 133, 112);
+  background-color: rgb(44, 133, 112);
+  color: white;
+  font-size: 14px;
 }
 
 .checkbox-item {
-    display: flex;
-    align-items: center ;
-    flex-direction: row;
-    gap: 8px;
-    margin: 0;
-    height: 10%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+  margin: 0;
+  height: 10%;
 }
 
-.text{
-    color: white;
-    font-size: 1em;
-    font-weight: bold;
-    align-self: centers;
+.text {
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  align-self: centers;
 }
 
 @media (max-width: 1025px) {
-    
 }

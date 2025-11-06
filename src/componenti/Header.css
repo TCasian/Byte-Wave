@@ -20,10 +20,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.logo-section{
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .logo {
@@ -68,23 +68,21 @@
 }
 
 .icon {
-    border: 1px solid white;
-    /*padding: 0.5rem;*/
-    width: 2.5em;
-    height: 2.5em;
-    border-radius: 20px;
-    align-content: center;
+  border: 1px solid white;
+  /*padding: 0.5rem;*/
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 20px;
+  align-content: center;
 }
 .icon:hover {
-    background-color: #4db9a0;
-    transition: background-color 0.3s ease;
+  background-color: #4db9a0;
+  transition: background-color 0.3s ease;
 }
 
-
-.menu{
-    background-color: #4db9a0 ;
+.menu {
+  background-color: #4db9a0;
 }
-
 
 @media (max-width: 1025px) {
   .header {
@@ -110,11 +108,9 @@
 
   .nav.active {
     display: none;
-    
   }
 
   .burger {
     display: block;
   }
-
 }

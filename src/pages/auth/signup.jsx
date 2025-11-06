@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import "./auth.css";
 import { supabase } from "../../supabaseClient";
 import PixelBlast from "./PixelBlast";
-import {CheckboxItem} from "../../componenti/checkbox";
+import { CheckboxItem } from "../../componenti/checkbox";
 import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  
-  const navigate  = useNavigate();
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -20,6 +21,11 @@ function Signup() {
   const [status, setStatus] = useState({
     errors: {},
     valid: {},
+  });
+
+  const [takenData, setTakenData] = useState({
+    usernames: [],
+    emails: [],
   });
 
   const [showPasswordChecklist, setShowPasswordChecklist] = useState(false);
@@ -37,11 +43,16 @@ function Signup() {
     let isValid = false;
     switch (field) {
       case "username":
-        if (!usernameRegex.test(value)) error = "Invalid username (3-20 chars, letters/numbers only)";
+        if (!usernameRegex.test(value))
+          error = "Invalid username (3-20 chars, letters/numbers only)";
+        else if (takenData.usernames.includes(value))
+          error = "Username already taken";
         else isValid = true;
         break;
       case "email":
         if (!emailRegex.test(value)) error = "Invalid email format";
+        else if (takenData.emails.includes(value))
+          error = "Email already taken";
         else isValid = true;
         break;
       case "password":
@@ -50,47 +61,65 @@ function Signup() {
         break;
       default:
         break;
-  }
-  setStatus((prev) => ({
-    errors: { ...prev.errors, [field]: error },
-    valid: { ...prev.valid, [field]: isValid },
+    }
+    setStatus((prev) => ({
+      errors: { ...prev.errors, [field]: error },
+      valid: { ...prev.valid, [field]: isValid },
     }));
   };
 
   async function handleRegister(username, email, password) {
-    const body = {username, email, password };
+    const body = { username, email, password };
     console.log("➡️ Inviando:", body);
 
-  const res = await fetch(
-    "https://pwddgvpjpqpvludspjwr.supabase.co/functions/v1/create-user",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }
-  );
+    const res = await fetch(
+      "https://pwddgvpjpqpvludspjwr.supabase.co/functions/v1/create-user",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }
+    );
 
-  const data = await res.json();
-  const error = data?.error;
+    const data = await res.json();
+    const error = data?.error;
     console.log("➡️ ricevuto", data);
 
-  switch(error || data?.message) {
-    case "USERNAME_TAKEN":
-      alert("Username already taken. Please choose another one.");
-      break;
-    case "EMAIL_TAKEN":
-      alert("Email already registered. Please use another email.");
-      break;
-    case "OK_SUCCESS":
-      alert("Registration successful! You can now log in.");
-      break;
-    default:
-      alert("An unexpected error occurred. Please try again later.");
-      break;
+    switch (error || data?.message) {
+      case "USERNAME_TAKEN":
+        setStatus((prev) => ({
+          errors: {
+            ...prev.errors,
+            username: "Username already taken. Please choose another one.",
+          },
+          valid: { ...prev.valid, username: false },
+        }));
+        setTakenData((prev) => ({
+          ...prev,
+          usernames: [...prev.usernames, username],
+        }));
+        break;
+      case "EMAIL_TAKEN":
+        setStatus((prev) => ({
+          errors: {
+            ...prev.errors,
+            email: "Email already registered. Please use another email.",
+          },
+          valid: { ...prev.valid, email: false },
+        }));
+        setTakenData((prev) => ({
+          ...prev,
+          emails: [...prev.emails, email],
+        }));
+        break;
+      case "OK_SUCCESS":
+        alert("Registration successful! You can now log in.");
+        break;
+      default:
+        alert("An unexpected error occurred. Please try again later.");
+        break;
+    }
   }
-}
-
-
 
   return (
     <div className="container-auth">
@@ -111,61 +140,94 @@ function Signup() {
         transparent
       />
 
-      <form className="form-auth"onSubmit={(e) => {
+      <form
+        className="form-auth"
+        onSubmit={(e) => {
           e.preventDefault();
           handleRegister(form.username, form.email, form.password);
-        }}>
-        <h1 style={{ color: "#fff", textAlign: "center" , marginTop: "0px"}}>Signup</h1>
+        }}
+      >
+        <h1 style={{ color: "#fff", textAlign: "center", marginTop: "0px" }}>
+          Signup
+        </h1>
 
         <input
-          className={`input-auth ${status.valid.username ? "valid" : ""} ${status.errors.username ? "invalid" : ""}`}
+          className={`input-auth ${status.valid.username ? "valid" : ""} ${
+            status.errors.username ? "invalid" : ""
+          }`}
           type="text"
           placeholder="Username"
           value={form.username}
           onChange={(e) => handleChange("username", e.target.value)}
           required
         />
-        {status.errors.username && <p className="error-text">{status.errors.username}</p>}
+        {status.errors.username && (
+          <p className="error-text">{status.errors.username}</p>
+        )}
 
         <input
-          className={`input-auth ${status.valid.email ? "valid" : ""} ${status.errors.email ? "invalid" : ""}`}
+          className={`input-auth ${status.valid.email ? "valid" : ""} ${
+            status.errors.email ? "invalid" : ""
+          }`}
           type="email"
           placeholder="Email"
           value={form.email}
           onChange={(e) => handleChange("email", e.target.value)}
           required
         />
-        {status.errors.email && <p className="error-text">{status.errors.email}</p>}
-
+        {status.errors.email && (
+          <p className="error-text">{status.errors.email}</p>
+        )}
 
         <input
-          className={`input-auth ${status.valid.password ? "valid" : ""} ${status.errors.password ? "invalid" : ""}`}
+          className={`input-auth ${status.valid.password ? "valid" : ""} ${
+            status.errors.password ? "invalid" : ""
+          }`}
           type="password"
           placeholder="Password"
           value={form.password}
-          onFocus={() =>  setShowPasswordChecklist(true)}
+          onFocus={() => setShowPasswordChecklist(true)}
           onBlur={() => setShowPasswordChecklist(false)}
           onChange={(e) => handleChange("password", e.target.value)}
           required
         />
 
-        <div className="password-checklist" style={{ display: showPasswordChecklist ? "flex" : "none" }}>
-              <CheckboxItem isMet={passwordChecks.length} label="Atlest 8 characters" />
-              <CheckboxItem isMet={passwordChecks.lowercase} label="At least one lowercase letter" />
-              <CheckboxItem isMet={passwordChecks.uppercase} label="At least one uppercase letter" />
-              <CheckboxItem isMet={passwordChecks.number} label="At least one number" />
-              <CheckboxItem isMet={passwordChecks.symbol} label="At least one special character " />
+        <div
+          className="password-checklist"
+          style={{ display: showPasswordChecklist ? "flex" : "none" }}
+        >
+          <CheckboxItem
+            isMet={passwordChecks.length}
+            label="Atlest 8 characters"
+          />
+          <CheckboxItem
+            isMet={passwordChecks.lowercase}
+            label="At least one lowercase letter"
+          />
+          <CheckboxItem
+            isMet={passwordChecks.uppercase}
+            label="At least one uppercase letter"
+          />
+          <CheckboxItem
+            isMet={passwordChecks.number}
+            label="At least one number"
+          />
+          <CheckboxItem
+            isMet={passwordChecks.symbol}
+            label="At least one special character "
+          />
         </div>
 
         <button type="submit" className="submit-button">
           Register
         </button>
-        <div className='signup-div'>
-          <h4>You already have an account?</h4> <h4 className='link-signup' onClick={() => navigate('/login')}>Log In</h4>
+        <div className="signup-div">
+          <h4>You already have an account?</h4>{" "}
+          <h4 className="link-signup" onClick={() => navigate("/login")}>
+            Log In
+          </h4>
         </div>
-      
       </form>
-    
     </div>
   );
 }

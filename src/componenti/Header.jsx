@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { FaSearch, FaBars, FaTimes, FaUser } from "react-icons/fa";
-import './Header.css';
+import "./Header.css";
 
 import { useSelector, useDispatch } from "react-redux";
 import { toggleMenu } from "../features/menu/menuSlice";
-import { Link, useNavigate } from 'react-router-dom'
-
+import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
   const menuOpen = useSelector((state) => state.menu.open);
@@ -19,7 +18,7 @@ function Header() {
     { name: "Startups", path: "/startups" },
     { name: "Venture", path: "/venture" },
     { name: "Blockchain", path: "/blockchain" },
-    { name: "Newsletters", path: "/newsletters" }
+    { name: "Newsletters", path: "/newsletters" },
   ];
 
   return (
@@ -32,7 +31,7 @@ function Header() {
 
       {/* Navbar */}
       <nav className={`nav active`}>
-        {links.map(link => (
+        {links.map((link) => (
           <div key={link.name} className="nav-item">
             <Link to={link.path}>{link.name}</Link>
           </div>
@@ -41,20 +40,18 @@ function Header() {
 
       {/* Icone */}
       <div className="icons">
-        <div className="icon"> 
-            <FaSearch className="search-icon" />
-         </div>
-        <div className="icon"> 
-             <div className="burger" onClick={() => dispatch(toggleMenu())} >
-          {menuOpen ? <FaTimes /> : <FaBars />}
+        <div className="icon">
+          <FaSearch className="search-icon" />
         </div>
-        
+        <div className="icon">
+          <div className="burger" onClick={() => dispatch(toggleMenu())}>
+            {menuOpen ? <FaTimes /> : <FaBars />}
+          </div>
         </div>
-        <div className="icon" onClick={() => navigate('/login')}> 
-            <FaUser />
-         </div>
+        <div className="icon" onClick={() => navigate("/login")}>
+          <FaUser />
+        </div>
       </div>
-      
     </header>
   );
 }
