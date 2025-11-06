@@ -19,10 +19,13 @@ function Dashboard() {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+
     if (error) {
       console.error("❌ Errore durante il logout:", error.message);
     } else {
       console.log("✅ Logout avvenuto con successo");
+      localStorage.clear(); // se salvi cose extra
+      sessionStorage.clear();
       navigate("/login");
     }
   };
