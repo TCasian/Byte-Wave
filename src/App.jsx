@@ -45,6 +45,7 @@ function App() {
         <Route path="/add-articles" element={<AddArticles />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
