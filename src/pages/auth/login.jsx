@@ -36,33 +36,25 @@ function Login() {
   };
 
   async function handleSignInWithGoogle(response) {
-    try {
-      const { data, error } = await supabase.auth.signInWithIdToken({
-        provider: "google",
-        token: response.credential,
-      });
+    console.log("🔹 Google response:", response);
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: "google",
+      token: response.credential,
+    });
 
-      if (error) {
-        console.error("❌ Errore login con Google:", error.message);
-        alert("Errore durante il login con Google: " + error.message);
-        return;
-      }
-
-      console.log("✅ Login Google riuscito:", data);
-
-      const { data: sessionData } = await supabase.auth.getSession();
-
-      if (sessionData?.session) {
-        console.log("🪪 Sessione:", sessionData.session);
-        navigate("/dashboard");
-      } else {
-        alert("Non è stato possibile avviare la sessione. Riprova.");
-      }
-    } catch (err) {
-      console.error("⚠️ Errore inaspettato:", err);
-      alert("Errore inaspettato: " + err.message);
+    if (error) {
+      console.error("❌ Errore Google login:", error);
+      setMessage(error.message);
+      return;
     }
+
+    console.log("✅ Login con Google:", data.user);
+    navigate("/dashboard");
   }
+
+  useEffect(() => {
+    window.handleSignInWithGoogle = handleSignInWithGoogle;
+  }, []);
 
   return (
     <div className="container-auth">
