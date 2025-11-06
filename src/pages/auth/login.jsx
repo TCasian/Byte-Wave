@@ -35,18 +35,34 @@ function Login() {
     }
   };
 
-  const handleSignInWithGoogle = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "https://techripples.vercel.app/dashboard", // o la tua route post-login
-        queryParams: { prompt: "select_account" },
-      },
-    });
+  async function handleSignInWithGoogle(response) {
+    try {
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: "google",
+        token: response.credential,
+      });
 
-    if (error) console.error("Errore login Google:", error);
-    else console.log("🔗 Reindirizzamento a Google...");
-  };
+      if (error) {
+        console.error("❌ Errore login con Google:", error.message);
+        alert("Errore durante il login con Google: " + error.message);
+        return;
+      }
+
+      console.log("✅ Login Google riuscito:", data);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+
+      if (sessionData?.session) {
+        console.log("🪪 Sessione:", sessionData.session);
+        navigate("/dashboard");
+      } else {
+        alert("Non è stato possibile avviare la sessione. Riprova.");
+      }
+    } catch (err) {
+      console.error("⚠️ Errore inaspettato:", err);
+      alert("Errore inaspettato: " + err.message);
+    }
+  }
 
   return (
     <div className="container-auth">
