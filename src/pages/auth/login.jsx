@@ -35,12 +35,18 @@ function Login() {
     }
   };
 
-  async function handleSignInWithGoogle(response) {
-    const { data, error } = await supabase.auth.signInWithIdToken({
+  const handleSignInWithGoogle = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      token: response.credential,
+      options: {
+        redirectTo: "https://techripples.vercel.app/dashboard", // o la tua route post-login
+        queryParams: { prompt: "select_account" },
+      },
     });
-  }
+
+    if (error) console.error("Errore login Google:", error);
+    else console.log("🔗 Reindirizzamento a Google...");
+  };
 
   return (
     <div className="container-auth">
@@ -61,27 +67,6 @@ function Login() {
         transparent
       />
       <script src="https://accounts.google.com/gsi/client" async></script>
-
-      <div
-        id="g_id_onload"
-        data-client_id="201191962997-pqvlvqmsqeo10qcgcrj1bojah5b1vqrj.apps.googleusercontent.com"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-callback="handleSignInWithGoogle"
-        data-nonce=""
-        data-auto_select="true"
-        data-itp_support="true"
-        data-use_fedcm_for_prompt="true"
-      ></div>
-      <div
-        class="g_id_signin"
-        data-type="standard"
-        data-shape="pill"
-        data-theme="outline"
-        data-text="signin_with"
-        data-size="large"
-        data-logo_alignment="left"
-      ></div>
 
       <form onSubmit={handleLogin} className="form-auth">
         <h1 style={{ color: "#fff", textAlign: "center" }}>Login</h1>
@@ -133,6 +118,27 @@ function Login() {
         {message && (
           <p style={{ color: "#fff", textAlign: "center" }}>{message}</p>
         )}
+
+        <div
+          id="g_id_onload"
+          data-client_id="201191962997-pqvlvqmsqeo10qcgcrj1bojah5b1vqrj.apps.googleusercontent.com"
+          data-context="signin"
+          data-ux_mode="popup"
+          data-callback="handleSignInWithGoogle"
+          data-nonce=""
+          data-auto_select="true"
+          data-itp_support="true"
+          data-use_fedcm_for_prompt="true"
+        ></div>
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-shape="pill"
+          data-theme="outline"
+          data-text="signin_with"
+          data-size="large"
+          data-logo_alignment="left"
+        ></div>
       </form>
     </div>
   );
