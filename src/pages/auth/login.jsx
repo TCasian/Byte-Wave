@@ -32,27 +32,6 @@ function Login() {
     }
   };
 
-  async function handleSignInWithGoogle(response) {
-    console.log("🔹 Google response:", response);
-    const { data, error } = await supabase.auth.signInWithIdToken({
-      provider: "google",
-      token: response.credential,
-    });
-
-    if (error) {
-      console.error("❌ Errore Google login:", error);
-      setMessage(error.message);
-      return;
-    }
-
-    console.log("✅ Login con Google:", data.user);
-    navigate("/dashboard");
-  }
-
-  useEffect(() => {
-    window.handleSignInWithGoogle = handleSignInWithGoogle;
-  }, []);
-
   return (
     <div className="container-auth">
       <PixelBlast
@@ -73,7 +52,7 @@ function Login() {
       />
       <script src="https://accounts.google.com/gsi/client" async></script>
 
-      <form onSubmit={handleLogin} className="form-auth">
+      <form onSubmit={handleLogin} className="div-auth">
         <h1 style={{ color: "#fff", textAlign: "center" }}>Login</h1>
 
         <input
@@ -123,27 +102,6 @@ function Login() {
         {message && (
           <p style={{ color: "#fff", textAlign: "center" }}>{message}</p>
         )}
-
-        <div
-          id="g_id_onload"
-          data-client_id="201191962997-pqvlvqmsqeo10qcgcrj1bojah5b1vqrj.apps.googleusercontent.com"
-          data-context="signin"
-          data-ux_mode="popup"
-          data-callback="handleSignInWithGoogle"
-          data-nonce=""
-          data-auto_select="false"
-          data-itp_support="true"
-          data-use_fedcm_for_prompt="true"
-        ></div>
-        <div
-          class="g_id_signin"
-          data-type="standard"
-          data-shape="pill"
-          data-theme="outline"
-          data-text="signin_with"
-          data-size="large"
-          data-logo_alignment="left"
-        ></div>
       </form>
     </div>
   );

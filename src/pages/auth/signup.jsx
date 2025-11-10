@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, userRef } from "react";
 import "./auth.css";
 import { supabase } from "../../supabaseClient";
 import PixelBlast from "./PixelBlast";
@@ -37,7 +37,39 @@ function Signup() {
     symbol: /[@$!%*?&]/.test(form.password),
   };
 
-  const handleChange = (field, value) => {
+  const [loading, setLoading] = useState(false);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const inputsRef = React.useRef([]);
+
+  async function sendEmails(email) {
+    const recipients = [email];
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        recipients,
+        subject: "Code",
+        text: "Questa è una prova di invio multiplo con Brevo SMTP",
+      }),
+    });
+
+    const data = await res.json();
+    console.log(data);
+  }
+
+  const handleChange = (field, value, index = 0) => {
+    if (field === "code") {
+      const newCode = [...code];
+
+      const val = value.slice(-1);
+      newCode[index] = val;
+      setCode(newCode);
+
+      if (val && index < code.length - 1) {
+        inputsRef.current[index + 1]?.focus();
+      }
+      return;
+    }
     setForm((prev) => ({ ...prev, [field]: value }));
     let error = "";
     let isValid = false;
@@ -59,6 +91,7 @@ function Signup() {
         if (!passwordRegex.test(value)) error = "Weak password";
         else isValid = true;
         break;
+
       default:
         break;
     }
@@ -70,6 +103,7 @@ function Signup() {
 
   async function handleRegister(username, email, password) {
     const body = { username, email, password };
+    setLoading(true);
     console.log("➡️ Inviando:", body);
 
     const res = await fetch(
@@ -113,10 +147,13 @@ function Signup() {
         }));
         break;
       case "OK_SUCCESS":
+        setLoading(false);
         alert("Registration successful! You can now log in.");
+        sendEmails(form.email);
         break;
       default:
         alert("An unexpected error occurred. Please try again later.");
+        setLoading(false);
         break;
     }
   }
@@ -139,95 +176,125 @@ function Signup() {
         edgeFade={0.25}
         transparent
       />
-
-      <form
-        className="form-auth"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleRegister(form.username, form.email, form.password);
-        }}
-      >
-        <h1 style={{ color: "#fff", textAlign: "center", marginTop: "0px" }}>
-          Signup
-        </h1>
-
-        <input
-          className={`input-auth ${status.valid.username ? "valid" : ""} ${
-            status.errors.username ? "invalid" : ""
-          }`}
-          type="text"
-          placeholder="Username"
-          value={form.username}
-          onChange={(e) => handleChange("username", e.target.value)}
-          required
-        />
-        {status.errors.username && (
-          <p className="error-text">{status.errors.username}</p>
-        )}
-
-        <input
-          className={`input-auth ${status.valid.email ? "valid" : ""} ${
-            status.errors.email ? "invalid" : ""
-          }`}
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-          required
-        />
-        {status.errors.email && (
-          <p className="error-text">{status.errors.email}</p>
-        )}
-
-        <input
-          className={`input-auth ${status.valid.password ? "valid" : ""} ${
-            status.errors.password ? "invalid" : ""
-          }`}
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onFocus={() => setShowPasswordChecklist(true)}
-          onBlur={() => setShowPasswordChecklist(false)}
-          onChange={(e) => handleChange("password", e.target.value)}
-          required
-        />
-
-        <div
-          className="password-checklist"
-          style={{ display: showPasswordChecklist ? "flex" : "none" }}
+      {!loading ? (
+        <form
+          className="div-auth"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleRegister(form.username, form.email, form.password);
+          }}
         >
-          <CheckboxItem
-            isMet={passwordChecks.length}
-            label="Atlest 8 characters"
-          />
-          <CheckboxItem
-            isMet={passwordChecks.lowercase}
-            label="At least one lowercase letter"
-          />
-          <CheckboxItem
-            isMet={passwordChecks.uppercase}
-            label="At least one uppercase letter"
-          />
-          <CheckboxItem
-            isMet={passwordChecks.number}
-            label="At least one number"
-          />
-          <CheckboxItem
-            isMet={passwordChecks.symbol}
-            label="At least one special character "
-          />
-        </div>
+          <h1 style={{ color: "#fff", textAlign: "center", marginTop: "0px" }}>
+            Signup
+          </h1>
 
-        <button type="submit" className="submit-button">
-          Register
-        </button>
-        <div className="signup-div">
-          <h4>You already have an account?</h4>{" "}
-          <h4 className="link-signup" onClick={() => navigate("/login")}>
-            Log In
-          </h4>
+          <input
+            className={`input-auth ${status.valid.username ? "valid" : ""} ${
+              status.errors.username ? "invalid" : ""
+            }`}
+            type="text"
+            placeholder="Username"
+            value={form.username}
+            onChange={(e) => handleChange("username", e.target.value)}
+            required
+          />
+          {status.errors.username && (
+            <p className="error-text">{status.errors.username}</p>
+          )}
+
+          <input
+            className={`input-auth ${status.valid.email ? "valid" : ""} ${
+              status.errors.email ? "invalid" : ""
+            }`}
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={(e) => handleChange("email", e.target.value)}
+            required
+          />
+          {status.errors.email && (
+            <p className="error-text">{status.errors.email}</p>
+          )}
+
+          <input
+            className={`input-auth ${status.valid.password ? "valid" : ""} ${
+              status.errors.password ? "invalid" : ""
+            }`}
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onFocus={() => setShowPasswordChecklist(true)}
+            onBlur={() => setShowPasswordChecklist(false)}
+            onChange={(e) => handleChange("password", e.target.value)}
+            required
+          />
+
+          <div
+            className="password-checklist"
+            style={{
+              display: showPasswordChecklist ? "flex" : "none",
+              pointerEvents: "none",
+            }}
+          >
+            <CheckboxItem
+              isMet={passwordChecks.length}
+              label="Atlest 8 characters"
+            />
+            <CheckboxItem
+              isMet={passwordChecks.lowercase}
+              label="At least one lowercase letter"
+            />
+            <CheckboxItem
+              isMet={passwordChecks.uppercase}
+              label="At least one uppercase letter"
+            />
+            <CheckboxItem
+              isMet={passwordChecks.number}
+              label="At least one number"
+            />
+            <CheckboxItem
+              isMet={passwordChecks.symbol}
+              label="At least one of (@$!%*?&) "
+            />
+          </div>
+
+          <button type="submit" className="submit-button">
+            Register
+          </button>
+          <div className="signup-div">
+            <h4>You already have an account?</h4>{" "}
+            <h4 className="link-signup" onClick={() => navigate("/login")}>
+              Log In
+            </h4>
+          </div>
+        </form>
+      ) : (
+        <div className="div-auth">
+          <h2>Verification code</h2>
+          <h3>Please enter the verification code sent to {form.email}</h3>
+          <div className={`otp-container ${status.errors.code ? "error" : ""}`}>
+            {code.map((digit, i) => (
+              <input
+                key={i}
+                ref={(el) => (inputsRef.current[i] = el)}
+                className="otp-box"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleChange("code", e.target.value, i)}
+                onKeyDown={(e) => {
+                  console.log(e.key);
+                  if (e.key === "Backspace" && !code[i] && i > 0) {
+                    inputsRef.current[i - 1]?.focus();
+                  }
+                }}
+              />
+            ))}
+          </div>
         </div>
-      </form>
+      )}
     </div>
   );
 }
