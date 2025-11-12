@@ -1,15 +1,18 @@
-import React, { useState, userRef } from "react";
+import React, { useState, userRef, useEffect } from "react";
 import "./auth.css";
 import { supabase } from "../../supabaseClient";
 import PixelBlast from "./PixelBlast";
 import { CheckboxItem } from "../../componenti/checkbox";
+import Typewriter from "../../componenti/Typewriter.jsx";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { showHeader } from "../../features/menu/menuSlice";
 
 function Signup() {
   const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,}$/;
 
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -17,6 +20,40 @@ function Signup() {
     email: "",
     password: "",
   });
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(showHeader(false));
+    return () => dispatch(showHeader(true));
+  }, [dispatch]);
+
+  async function handler(req, res) {
+    try {
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "api-key": process.env.BREVO_API_KEY, // la tua API key
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: { name: "Sender Alex", email: "senderalex@example.com" },
+          to: [{ email: "testmail@example.com", name: "John Doe" }],
+          subject: "Hello world",
+          htmlContent:
+            "<html><head></head><body><p>Hello,</p><p>This is my first transactional email sent from Brevo.</p></body></html>",
+        }),
+      });
+
+      const data = await response.json();
+      res.status(200).json(data);
+    } catch (err) {
+      console.error(err);
+      res
+        .status(500)
+        .json({ message: "Errore invio email", error: err.toString() });
+    }
+  }
 
   const [status, setStatus] = useState({
     errors: {},
@@ -176,6 +213,19 @@ function Signup() {
         edgeFade={0.25}
         transparent
       />
+
+      <div className="info-container">
+        <img src="Logo.svg" alt="Logo" className="logo" />
+        <h1 className="info-text">TECH RIPPLES</h1>
+        <Typewriter
+          strings={[
+            "Write. Share. Earn. All about tech.",
+            "Your tech stories deserve to be read — and rewarded.",
+            "Join the free tech blog where your words make money.",
+          ]}
+        />
+      </div>
+
       {!loading ? (
         <form
           className="div-auth"
@@ -185,7 +235,7 @@ function Signup() {
           }}
         >
           <h1 style={{ color: "#fff", textAlign: "center", marginTop: "0px" }}>
-            Signup
+            Sign Up For Free
           </h1>
 
           <input
@@ -259,11 +309,24 @@ function Signup() {
           </div>
 
           <button type="submit" className="submit-button">
-            Register
+            Create Account
           </button>
+          <div className="disclaimer-container">
+            By clicking the "Create account" button, I expressly agree to the{" "}
+            <span
+              className="link"
+              onClick={() => navigate("/terms-of-service")}
+            >
+              TechRipples Terms of Service
+            </span>{" "}
+            and understand that my account information will be used according to{" "}
+            <span className="link" onClick={() => navigate("/privacy-policy")}>
+              TechRipples Privacy Policy
+            </span>
+          </div>
           <div className="signup-div">
             <h4>You already have an account?</h4>{" "}
-            <h4 className="link-signup" onClick={() => navigate("/login")}>
+            <h4 className="link" onClick={() => navigate("/login")}>
               Log In
             </h4>
           </div>

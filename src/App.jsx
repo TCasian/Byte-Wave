@@ -8,6 +8,8 @@ import AddArticles from "./pages/add-articles/add-articles";
 import Login from "./pages/auth/login";
 import Signup from "./pages/auth/signup";
 import Dashboard from "./pages/dashboard/dashboard";
+import Home from "./pages/home/Home.jsx";
+import { TermsOfService } from "./pages/policy/terms-of-service.jsx";
 
 function App() {
   useEffect(() => {
@@ -30,26 +32,14 @@ function App() {
 
   return (
     <Router>
-      <Header />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <div className="top-headlines">
-                <div className="titles"></div>
-                <div className="articles"></div>
-              </div>
-              <div className="ad-space"></div>
-            </>
-          }
-        />
-
+        <Route path="/" element={<Home />} />
         <Route path="/security" element={<Security />} />
         <Route path="/add-articles" element={<AddArticles />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Routes>
     </Router>
   );

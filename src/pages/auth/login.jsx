@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import PixelBlast from "./PixelBlast";
 import { Link, useNavigate } from "react-router-dom";
+import Typewriter from "../../componenti/Typewriter.jsx";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -52,6 +53,18 @@ function Login() {
       />
       <script src="https://accounts.google.com/gsi/client" async></script>
 
+      <div className="info-container">
+        <img src="Logo.svg" alt="Logo" className="logo" />
+        <h1 className="info-text">TECH RIPPLES</h1>
+        <Typewriter
+          strings={[
+            "Write. Share. Earn. All about tech.",
+            "Your tech stories deserve to be read — and rewarded.",
+            "Join the free tech blog where your words make money.",
+          ]}
+        />
+      </div>
+
       <form onSubmit={handleLogin} className="div-auth">
         <h1 style={{ color: "#fff", textAlign: "center" }}>Login</h1>
 
@@ -94,7 +107,7 @@ function Login() {
         </button>
         <div className="signup-div">
           <h4>You don't have an account?</h4>{" "}
-          <h4 className="link-signup" onClick={() => navigate("/signup")}>
+          <h4 className="link" onClick={() => navigate("/signup")}>
             Sign Up
           </h4>
         </div>

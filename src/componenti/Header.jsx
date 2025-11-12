@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
   const menuOpen = useSelector((state) => state.menu.open);
+  const menuShown = useSelector((state) => state.menu.shown);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,10 +23,10 @@ function Header() {
   ];
 
   return (
-    <header className="header">
+    <header className="header" style={{ display: menuShown ? "flex" : "none" }}>
       {/* Logo */}
       <div className="logo-section">
-        <img src="logo.png" alt="Logo" className="logo-img" />
+        <img src="Logo.svg" alt="Logo" className="logo-img" />
         <span className="logo-title">TechRipples</span>
       </div>
 
